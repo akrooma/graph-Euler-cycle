@@ -1,0 +1,1 @@
+Graafiülesande baasklassid ning aruande vormistusnõuded.
