@@ -1,4 +1,3 @@
-
 import java.util.*;
 
 public class GraphTask {
@@ -14,18 +13,18 @@ public class GraphTask {
       g.createRandomSimpleGraph (6, 9);
       System.out.println (g);
 
-      // TODO!!! YOUR TESTS HERE!
+      // TODO!!! Your experiments here
    }
 
 
    class Vertex {
 
-      String id;
-      Vertex next;
-      Edge first;
-      int info = 0;
+      private String id;
+      private Vertex next;
+      private Arc first;
+      private int info = 0;
 
-      Vertex (String s, Vertex v, Edge e) {
+      Vertex (String s, Vertex v, Arc e) {
          id = s;
          next = v;
          first = e;
@@ -41,24 +40,23 @@ public class GraphTask {
       }
 
       // TODO!!! Your Vertex methods here!
+   }
 
-   } // Vertex
 
+   class Arc {
 
-   class Edge {
+      private String id;
+      private Vertex target;
+      private Arc next;
+      private int info = 0;
 
-      String id;
-      Vertex target;
-      Edge next;
-      int info = 0;
-
-      Edge (String s, Vertex v, Edge e) {
+      Arc (String s, Vertex v, Arc a) {
          id = s;
          target = v;
-         next = e;
+         next = a;
       }
 
-      Edge (String s) {
+      Arc (String s) {
          this (s, null, null);
       }
 
@@ -67,16 +65,15 @@ public class GraphTask {
          return id;
       }
 
-      // TODO!!! Your Edge methods here!
-
-   } // Edge
+      // TODO!!! Your Arc methods here!
+   } 
 
 
    class Graph {
 
-      String id;
-      Vertex first;
-      int info = 0;
+      private String id;
+      private Vertex first;
+      private int info = 0;
 
       Graph (String s, Vertex v) {
          id = s;
@@ -97,16 +94,16 @@ public class GraphTask {
          while (v != null) {
             sb.append (v.toString());
             sb.append (" -->");
-            Edge e = v.first;
-            while (e != null) {
+            Arc a = v.first;
+            while (a != null) {
                sb.append (" ");
-               sb.append (e.toString());
+               sb.append (a.toString());
                sb.append (" (");
                sb.append (v.toString());
                sb.append ("->");
-               sb.append (e.target.toString());
+               sb.append (a.target.toString());
                sb.append (")");
-               e = e.next;
+               a = a.next;
             }
             sb.append (nl);
             v = v.next;
@@ -121,8 +118,8 @@ public class GraphTask {
          return res;
       }
 
-      public Edge createArc (String eid, Vertex from, Vertex to) {
-         Edge res = new Edge (eid);
+      public Arc createArc (String aid, Vertex from, Vertex to) {
+         Arc res = new Arc (aid);
          res.next = from.first;
          from.first = res;
          res.target = to;
@@ -142,9 +139,9 @@ public class GraphTask {
             varray [i] = createVertex ("v" + String.valueOf(n-i));
             if (i > 0) {
                int vnr = (int)(Math.random()*i);
-               createArc ("e" + varray [vnr].toString() + "_"
+               createArc ("a" + varray [vnr].toString() + "_"
                   + varray [i].toString(), varray [vnr], varray [i]);
-               createArc ("e" + varray [i].toString() + "_"
+               createArc ("a" + varray [i].toString() + "_"
                   + varray [vnr].toString(), varray [i], varray [vnr]);
             } else {}
          }
@@ -166,11 +163,11 @@ public class GraphTask {
          v = first;
          while (v != null) {
             int i = v.info;
-            Edge e = v.first;
-            while (e != null) {
-               int j = e.target.info;
+            Arc a = v.first;
+            while (a != null) {
+               int j = a.target.info;
                res [i][j]++;
-               e = e.next;
+               a = a.next;
             }
             v = v.next;
          }
@@ -179,7 +176,7 @@ public class GraphTask {
 
       /**
        * Create a connected simple (undirected, no loops, no multiple
-       * edges) random graph with n vertices and m edges.
+       * arcs) random graph with n vertices and m edges.
        * @param n number of vertices
        * @param m number of edges
        */
@@ -211,17 +208,16 @@ public class GraphTask {
                continue;  // no multiple edges
             Vertex vi = vert [i];
             Vertex vj = vert [j];
-            createArc ("e" + vi.toString() + "_" + vj.toString(), vi, vj);
+            createArc ("a" + vi.toString() + "_" + vj.toString(), vi, vj);
             connected [i][j] = 1;
-            createArc ("e" + vj.toString() + "_" + vi.toString(), vj, vi);
+            createArc ("a" + vj.toString() + "_" + vi.toString(), vj, vi);
             connected [j][i] = 1;
             edgeCount--;  // a new edge happily created
          }
       }
 
       // TODO!!! Your Graph methods here!
+   }
 
-   } // Graph
-
-} // GraphTask
+} 
 

@@ -1,4 +1,3 @@
-
 import static org.junit.Assert.*;
 import org.junit.Test;
 import java.util.*;
@@ -11,7 +10,7 @@ public class GraphTaskTest {
    @Test (timeout=20000)
    public void test1() { 
       GraphTask.main (null);
-      assertTrue ("Teste ei ole", true);
+      assertTrue ("There are no tests", true);
    }
 
 }
