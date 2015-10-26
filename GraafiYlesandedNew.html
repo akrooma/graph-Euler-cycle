@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+    <title>Graafi ülesanded</title>
+  </head>
+  <body>
+    <h3>Graafid</h3>
+    <p>Kõigi ülesannete puhul tuleb kasutada Moodle'st võetud
+      programmitoorikut (klassid Graph, Vertex, Arc). Vajadusel tohib
+      nendes klassides lisada isendimuutujaid ja meetodeid. <br>
+      Aruandes peab olema vähemalt 5 lahendusnäidet erinevate olukordade
+      jaoks.<br>
+    </p>
+    <ol>
+    </ol>
+    <b>Kui leiate ise huvitava ülesande, mida on võimalik lahendada
+      graafide abil (kasutades programmitoorikus etteantud viisi graafi
+      kujutamiseks külgnevusstruktuuri kujul)</b><b>, siis leppige see
+      õppejõuga kokku - see on väga hea võimalus individuaaltöö endale
+      huvitavaks teha.</b> Allpool mõned õppejõu poolt pakutavad
+    ülesanded.<br>
+    <ol>
+      <li>Koostada graafi sügava kloonimise meetod (tulemuses peavad
+        olema kõik Vertex ja Arc tüüpi objektid samuti kloonitud)
+        kooskõlas Java konventsioonidega.<br>
+      </li>
+      <li>Koostada meetod, mis teeb kindlaks, kas etteantud sidusas
+        lihtgraafis leidub Euleri tsükkel, ning selle leidumisel
+        nummerdab kõik servad vastavalt nende järjekorrale Euleri tsükli
+        läbimisel (vt. ka Fleury' algoritm).</li>
+      <li>Koostada meetod etteantud graafist etteantud tipu
+        eemaldamiseks (eemaldada tuleb ka kõik sellesse tippu suubuvad
+        ning sellest tipust väljuvad kaared).</li>
+      <li>Koostada meetod, mis arvutab etteantud sidusa lihtgraafi G=(V,
+        E) iga tipu v jaoks välja selle ekstsentrilisuse:</li>
+    </ol>
+    <div style="margin-left: 80px;">&nbsp;e(v) = max {d(u, v)| u kuulub
+      hulka V } , kus d(u, v) on tipu u kaugus tipust v (lühima tee
+      pikkus tipust u tippu v)<br>
+    </div>
+    <ol start="6">
+      <li>Koostada meetod n-tipulise täisgraafi moodustamiseks (Moodle
+        programmitoorikus kokkulepitud sisekujul), kus n &gt;= 0 on ette
+        antud meetodi parameetrina.<br>
+      </li>
+      <li>Koostada meetod, mis leiab sidusa lihtgraafi kõik niisugused
+        servad, millest ühe eemaldamine muudaks graafi mittesidusaks
+        (nn. "sillad").</li>
+      <li>Koostada meetod etteantud sidusa lihtgraafi minimaalse kaaluga
+        aluspuu (minimaalse toese) leidmiseks.</li>
+      <li>Koostada meetod etteantud lihtgraafi täiendgraafi leidmiseks.</li>
+      <li>Koostada meetod etteantud graafi transitiivse sulundi
+        leidmiseks.</li>
+      <li>Koostada meetod etteantud graafi n astme leidmiseks (n&gt;=0)
+        kasutades korrutamist.</li>
+      <li>*On antud sidus lihtgraaf, mille iga serva jaoks on teada
+        selle läbilaskevõime ("toru jämedus", mittenegatiivne). Koostada
+        meetod, mis leiab kahe etteantud tipu&nbsp; vahelise maksimaalse
+        läbilaskevõime Ford-Fulkersoni meetodil.</li>
+      <li>Koostada meetod, mis leiab etteantud sidusas lihtgraafis
+        etteantud tipust v kõige kaugemal asuva tipu.<br>
+      </li>
+      <li>Koostada meetod, mis leiab etteantud sidusas lihtgraafis
+        lühima tee kahe teineteisest maksimaalselt kaugel paikneva tipu
+        vahel.</li>
+      <li>Koostada meetod, mis leiab etteantud sidusas lihtgraafis kahe
+        etteantud tipu vahelise lühima tee.</li>
+      <li>*Koostada meetod, mis leiab etteantud lihtgraafis pikima
+        võimaliku tsükli (maksimaalse pikkusega kinnise ahela, milles
+        servad ei kordu).</li>
+      <li>Buldas, Laud, Villemson. Graafid (käsikiri, 2008, vt.
+        Moodle)&nbsp; lk.20, ül.12 - koostada meetod etteantud graafi
+        servgraafi leidmiseks.</li>
+      <li>- " -. lk. 20, ül. 15 - koostada meetod etteantud sidusas
+        lihtgraafis G etteantud tipu v ekstsentrilisuse leidmiseks.</li>
+      <li>- " -. lk. 20, ül. 15 - koostada meetod etteantud sidusa
+        lihtgraafi G raadiuse leidmiseks.</li>
+      <li>- " -. lk. 20, ül. 15 - koostada meetod etteantud sidusa
+        lihtgraafi G diameetri leidmiseks.</li>
+      <li>- " -. lk. 20, ül. 15 - koostada meetod etteantud sidusa
+        lihtgraafi G tsentri leidmiseks.<br>
+      </li>
+      <li>- " -. lk. 21, ül. 24 - koostada meetod etteantud lihtgraafi
+        kolmnurkade graafi moodustamiseks.</li>
+      <li>http://en.wikipedia.org/wiki/Pr%C3%BCfer_sequence - koostada
+        meetod etteantud puu Prüferi koodi leidmiseks.</li>
+      <li>J.Kiho. A&amp;A ülesannete kogu, 2005. lk.14, ül.6 - koostada
+        meetod ohutuima tee leidmiseks.</li>
+      <li>- " -. lk.14, ül.7a - koostada meetod, mis leiab tee läbi
+        kõrgeima punkti.</li>
+      <li>- " -. lk.15, ül.7c - koostada meetod, mis leiab tee, mille
+        kõrgeim tipp on võimalikult madalal.</li>
+      <li>Goodrich, Tamassia, 4th Ed., 2006. lk. 644, ül. C-13.12</li>
+      <li>- " -. lk. 643, ül. C-13.6<br>
+      </li>
+      <li>- " -. lk. 644, ül. C-13.20</li>
+      <li>- " -. lk. 643, ül. C-13.9</li>
+      <li>- " -. lk. 644, ül. C-13.20</li>
+      <li>- " -. lk. 645, ül. C-13.21</li>
+      <li>- " -. lk. 645, ül. C-13.23</li>
+      <li>- " -. lk. 646, ül. C-13.27</li>
+      <li>- " -. lk. 647, ül. P-13.13<br>
+      </li>
+    </ol>
+    <br>
+    <hr size="2" width="100%">Jaanus Pöial<br>
+    <br>
+    <br>
+    <br>
+  </body>
+</html>
