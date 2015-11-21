@@ -9,9 +9,11 @@ public class GraphTask {
 
    public void run() {
       Graph g = new Graph ("G");
-      g.createRandomSimpleGraph (6, 6);
+      g.createRandomSimpleGraph (4, 4);
       System.out.println (g);
-
+      g.printAdjMatrix();
+      g.setCircuit();
+      g.printInfos(2);
       // TODO!!! Your experiments here
    }
 
@@ -22,6 +24,7 @@ public class GraphTask {
       private Vertex next;
       private Arc first;
       private int info = 0;
+      private int degree = 0;
 
       Vertex (String s, Vertex v, Arc e) {
          id = s;
@@ -38,8 +41,20 @@ public class GraphTask {
          return id;
       }
 
-      // TODO!!! Your Vertex methods here!
-   }
+      public Arc getArc() {
+    	  Arc arc = first;
+    	  
+    	  if (arc.info != 0) {
+    		  arc = arc.next;
+    	  }
+    	  
+//    	  while (arc.info != 0) {
+//    		  arc = arc.next;
+//    	  }
+    	  
+    	  return arc;
+      }
+   } // class Vertex.
 
 
    class Arc {
@@ -64,8 +79,10 @@ public class GraphTask {
          return id;
       }
 
-      // TODO!!! Your Arc methods here!
-   } 
+      public Arc next() {
+    	  return next;
+      }
+   } // class Arc.
 
 
    class Graph {
@@ -216,10 +233,26 @@ public class GraphTask {
       }
       
       /**
-       * Checks if the graph meets the requirements of an Eulerian cycle.
-       * @return true if a cycle can be made, otherwise false.
+       * Sets the degree values for the graph's vertices.
        */
-      public boolean hasEulerianCycle() {
+      private void setDegrees() {
+    	  Vertex v = first;
+    	  
+    	  while (v != null) {
+              Arc a = v.first;
+              while (a != null) {
+            	  v.degree++;
+            	  a = a.next;
+              }
+              v = v.next;
+          }
+      }
+      
+      /**
+       * Checks if the graph meets the requirements of an Eulerian curcuit.
+       * @throws RuntimeException if the graph doesn't meet the requirements.
+       */
+      private void hasEulerianCircuit() {
     	  int x;
     	  int[][] adjMatrix = createAdjMatrix();
     	  
@@ -233,12 +266,68 @@ public class GraphTask {
     		  }
     		  
     		  if (x%2 != 0) {
-    			  return false;
+    			  throw new RuntimeException("Eulerian circuit cannot be made for graph: " + this);
     		  }
     	  }
+      }// hasEulerianCycle()
+      
+      /**
+       * Sets up an Eulerian circuit by numbering the arcs in the specific order.
+       * Counting starts from 1.
+       * @throws RuntimeException if the graph doesn't meet the requirements.
+       */
+      public void setCircuit() {
+    	  this.hasEulerianCircuit();
+    	  this.setDegrees();
     	  
-    	  return true;
+    	  int counter = 1;
+    	  Vertex vertex = first;
+    	  
+    	  while (vertex != null) {
+        	  Arc arc = vertex.getArc();
+        	  
+        	  if (arc != null && arc.info == 0) {
+        		  arc.info = counter;
+        		  
+        		  counter++;
+        	  } else {
+        		  return;
+        	  }
+        	  vertex = arc.target;
+    	  }
       }
+      
+      
+      
+      
+      
+      /*
+       * Assistant method.
+       * i = 1 => prints out graph's all vertex.degree values.
+       * i = 2 => prints out graph's all arc.info values.
+       */
+      public void printInfos(int i) {
+    	  Vertex v = first;
+    	  
+    	  if (i == 1) { // Prints out Vertex.degree
+        	  while (v != null) {
+        		  System.out.println("Vertex' degree -- " + v.degree);
+            	  v = v.next;
+        	  }
+    	  }
+    	  
+    	  if (i == 2) { // Prints Arc.info
+        	  while (v != null) {
+        		  System.out.println("Vertex " + v + " -- ");
+        		  Arc a = v.first;
+        		  while (a != null) {
+        			  System.out.println("Arc  " + a + "'s info --  " + a.info);
+        			  a = a.next;
+        		  }
+            	  v = v.next;
+        	  }
+    	  }
+      }// printInfos() end.
       
       /**
        * Prints out the graph's adjacency matrix in a simple format.
@@ -252,9 +341,9 @@ public class GraphTask {
     			  System.out.print(m[i][j] + ", ");
     		  }
     	  }
+    	  
+    	  System.out.println();
       }
       
-      
-   }
-} 
-
+   }// class Graph.
+}// class GraphTask.
