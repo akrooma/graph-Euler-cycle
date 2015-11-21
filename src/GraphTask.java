@@ -12,8 +12,8 @@ public class GraphTask {
       g.createRandomSimpleGraph (4, 4);
       System.out.println (g);
       g.printAdjMatrix();
-      g.setCircuit();
-      g.printInfos(2);
+      g.setEulerianCircuit(0);
+      g.printInfos(4);
       // TODO!!! Your experiments here
    }
 
@@ -24,7 +24,6 @@ public class GraphTask {
       private Vertex next;
       private Arc first;
       private int info = 0;
-      private int degree = 0;
 
       Vertex (String s, Vertex v, Arc e) {
          id = s;
@@ -90,6 +89,7 @@ public class GraphTask {
       private String id;
       private Vertex first;
       private int info = 0;
+      private int edges = 0;
 
       Graph (String s, Vertex v) {
          id = s;
@@ -230,22 +230,8 @@ public class GraphTask {
             connected [j][i] = 1;
             edgeCount--;  // a new edge happily created
          }
-      }
-      
-      /**
-       * Sets the degree values for the graph's vertices.
-       */
-      private void setDegrees() {
-    	  Vertex v = first;
-    	  
-    	  while (v != null) {
-              Arc a = v.first;
-              while (a != null) {
-            	  v.degree++;
-            	  a = a.next;
-              }
-              v = v.next;
-          }
+         
+         this.edges = m;
       }
       
       /**
@@ -272,48 +258,77 @@ public class GraphTask {
       }// hasEulerianCycle()
       
       /**
-       * Sets up an Eulerian circuit by numbering the arcs in the specific order.
-       * Counting starts from 1.
-       * @throws RuntimeException if the graph doesn't meet the requirements.
+       * 
+       * @param i -- info property of a vertex in the graph. It must be between [0; number of vertices in graph - 1].
        */
-      public void setCircuit() {
+      public void setEulerianCircuit (int i) {
     	  this.hasEulerianCircuit();
-    	  this.setDegrees();
     	  
+    	  if (i < 0 || i > this.info) {
+    		  throw new RuntimeException(i + " is an illegal vertex info property value for this graph.");
+    	  }
+    	  
+    	  int[][] m = this.createAdjMatrix();
     	  int counter = 1;
-    	  Vertex vertex = first;
     	  
-    	  while (vertex != null) {
-        	  Arc arc = vertex.getArc();
-        	  
-        	  if (arc != null && arc.info == 0) {
-        		  arc.info = counter;
-        		  
-        		  counter++;
-        	  } else {
-        		  return;
-        	  }
-        	  vertex = arc.target;
+    	  traverseMatrix(m, i, counter);
+      }
+      
+      private void traverseMatrix (int[][] m, int i, int counter) {
+    	  for (int j = 0; j < m[i].length; j++) {
+    		  if (m[i][j] == 1) {
+    			  m[i][j] = 2;
+    			  m[j][i] = 0;
+    			  
+    			  String si = String.valueOf(i+1);
+    			  String sj = String.valueOf(j+1);
+    			  
+    			  String name = "av" + si + "_v" + sj;
+    			  
+    			  Arc arc = this.getArcByName (name);
+    			  
+    			  arc.info = counter;
+    			  
+    			  if (counter <= this.edges) {
+        			  traverseMatrix (m, j, ++counter);
+    			  }
+    			  
+    			  return;
+    		  }
     	  }
       }
       
       
       
-      
+      private Arc getArcByName (String name) {
+    	  Vertex vertex = first;
+    	  
+    	  while (vertex != null) {
+    		  Arc arc = vertex.first;
+    		  while (arc != null) {
+    			  if (arc.id.equals(name)) {
+    				  return arc;
+    			  }
+    			  arc = arc.next;
+    		  }
+    		  vertex = vertex.next;
+    	  }
+    	  throw new RuntimeException ("Something went wrong. " + name + " found no match.");
+      }
       
       /*
        * Assistant method.
        * i = 1 => prints out graph's all vertex.degree values.
        * i = 2 => prints out graph's all arc.info values.
        */
-      public void printInfos(int i) {
+      public void printInfos (int i) {
     	  Vertex v = first;
     	  
-    	  if (i == 1) { // Prints out Vertex.degree
-        	  while (v != null) {
-        		  System.out.println("Vertex' degree -- " + v.degree);
-            	  v = v.next;
-        	  }
+    	  if (i == 1) { // vertex id.
+    		  while (v != null) {
+    			  System.out.println("Vertex " + v.id + " info property value: " + v.info);
+    			  v = v.next;
+    		  }
     	  }
     	  
     	  if (i == 2) { // Prints Arc.info
@@ -327,13 +342,36 @@ public class GraphTask {
             	  v = v.next;
         	  }
     	  }
+    	  
+    	  if (i == 3) { // arc id.
+           	  while (v != null) {
+        		  System.out.println("Vertex " + v + " -- ");
+        		  Arc a = v.first;
+        		  while (a != null) {
+        			  System.out.println("Arc  " + a + "'s id --  " + a.id);
+        			  a = a.next;
+        		  }
+            	  v = v.next;
+        	  }
+    	  }
+    	  
+    	  if (i == 4) {
+           	  while (v != null) { // arc info
+        		  Arc a = v.first;
+        		  while (a != null) {
+        			  System.out.println("Arc " + a + "'s info --  " + a.info);
+        			  a = a.next;
+        		  }
+            	  v = v.next;
+        	  }
+    	  }
       }// printInfos() end.
       
       /**
        * Prints out the graph's adjacency matrix in a simple format.
        */
       public void printAdjMatrix() {
-    	  int[][] m = createAdjMatrix();
+    	  int[][] m = this.createAdjMatrix();
     	  
     	  for (int i = 0; i < m.length; i++) {
     		  System.out.println();
@@ -343,7 +381,7 @@ public class GraphTask {
     	  }
     	  
     	  System.out.println();
-      }
+      }// printAdjMatrix();
       
    }// class Graph.
 }// class GraphTask.
