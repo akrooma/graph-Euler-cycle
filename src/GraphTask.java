@@ -5,12 +5,11 @@ public class GraphTask {
    public static void main (String[] args) {
       GraphTask a = new GraphTask();
       a.run();
-      throw new RuntimeException ("Nothing implemented yet!"); // delete this
    }
 
    public void run() {
       Graph g = new Graph ("G");
-      g.createRandomSimpleGraph (6, 9);
+      g.createRandomSimpleGraph (6, 6);
       System.out.println (g);
 
       // TODO!!! Your experiments here
@@ -215,9 +214,47 @@ public class GraphTask {
             edgeCount--;  // a new edge happily created
          }
       }
-
-      // TODO!!! Your Graph methods here!
+      
+      /**
+       * Checks if the graph meets the requirements of an Eulerian cycle.
+       * @return true if a cycle can be made, otherwise false.
+       */
+      public boolean hasEulerianCycle() {
+    	  int x;
+    	  int[][] adjMatrix = createAdjMatrix();
+    	  
+    	  for (int i = 0; i < adjMatrix.length; i++) {
+    		  x = 0;
+    		  
+    		  for (int j = 0; j < adjMatrix[i].length; j++) {
+    			  if (adjMatrix[i][j] == 1) {
+    				  x++;
+    			  }
+    		  }
+    		  
+    		  if (x%2 != 0) {
+    			  return false;
+    		  }
+    	  }
+    	  
+    	  return true;
+      }
+      
+      /**
+       * Prints out the graph's adjacency matrix in a simple format.
+       */
+      public void printAdjMatrix() {
+    	  int[][] m = createAdjMatrix();
+    	  
+    	  for (int i = 0; i < m.length; i++) {
+    		  System.out.println();
+    		  for (int j = 0; j < m.length; j++) {
+    			  System.out.print(m[i][j] + ", ");
+    		  }
+    	  }
+      }
+      
+      
    }
-
 } 
 
