@@ -12,9 +12,8 @@ public class GraphTask {
       g.createRandomSimpleGraph (4, 4);
       System.out.println (g);
       g.printAdjMatrix();
-      g.setEulerianCircuit(0);
-      g.printInfos(4);
-      // TODO!!! Your experiments here
+      g.setEulerianCircuit();
+      g.printInfo(2);
    }
 
 
@@ -38,20 +37,6 @@ public class GraphTask {
       @Override
       public String toString() {
          return id;
-      }
-
-      public Arc getArc() {
-    	  Arc arc = first;
-    	  
-    	  if (arc.info != 0) {
-    		  arc = arc.next;
-    	  }
-    	  
-//    	  while (arc.info != 0) {
-//    		  arc = arc.next;
-//    	  }
-    	  
-    	  return arc;
       }
    } // class Vertex.
 
@@ -77,10 +62,6 @@ public class GraphTask {
       public String toString() {
          return id;
       }
-
-      public Arc next() {
-    	  return next;
-      }
    } // class Arc.
 
 
@@ -89,7 +70,8 @@ public class GraphTask {
       private String id;
       private Vertex first;
       private int info = 0;
-      private int edges = 0;
+      private int edges = 0; // shows how many edges the graph has.
+      private int setEdges = 0;
 
       Graph (String s, Vertex v) {
          id = s;
@@ -235,8 +217,8 @@ public class GraphTask {
       }
       
       /**
-       * Checks if the graph meets the requirements of an Eulerian curcuit.
-       * @throws RuntimeException if the graph doesn't meet the requirements.
+       * Checks if this graph meets the requirements of an Eulerian circuit.
+       * @throws RuntimeException if this graph doesn't meet the requirements.
        */
       private void hasEulerianCircuit() {
     	  int x;
@@ -246,50 +228,63 @@ public class GraphTask {
     		  x = 0;
     		  
     		  for (int j = 0; j < adjMatrix[i].length; j++) {
-    			  if (adjMatrix[i][j] == 1) {
+    			  if (adjMatrix [i][j] == 1) {
     				  x++;
     			  }
     		  }
     		  
-    		  if (x%2 != 0) {
-    			  throw new RuntimeException("Eulerian circuit cannot be made for graph: " + this);
+    		  if (x % 2 != 0) {
+    			  throw new RuntimeException ("Eulerian circuit cannot be made for graph: " + this);
     		  }
     	  }
-      }// hasEulerianCycle()
+      }// hasEulerianCircuit();
       
       /**
-       * 
-       * @param i -- info property of a vertex in the graph. It must be between [0; number of vertices in graph - 1].
+       * Sets an Eulerian circuit for this graph by numbering the arcs according to the circuit's order.
+       * The algorithm starts from the first vertex. If it fails to find a proper circuit, it'll 
+       * restart the process from a new vertex.
        */
-      public void setEulerianCircuit (int i) {
+      public void setEulerianCircuit() {
     	  this.hasEulerianCircuit();
     	  
-    	  if (i < 0 || i > this.info) {
-    		  throw new RuntimeException(i + " is an illegal vertex info property value for this graph.");
-    	  }
-    	  
-    	  int[][] m = this.createAdjMatrix();
+    	  int[][] matrix = this.createAdjMatrix();
+    	  int vertexInfo = this.first.info;
     	  int counter = 1;
     	  
-    	  traverseMatrix(m, i, counter);
+    	  this.traverseMatrix (matrix, vertexInfo, counter);
+    	  
+    	  while (setEdges != this.edges) {
+    		  this.resetECircuit();
+    		  matrix = this.createAdjMatrix();
+    		  this.traverseMatrix (matrix, ++vertexInfo, counter);
+    	  }
+    	  
+    	  return;
       }
       
+      /**
+       * Goes through an adjacency matrix to make an Eulerian circuit for the graph.
+       * @param m -- a matrix showing which routes in the graph are open.
+       * @param i -- the info property of a vertex.
+       * @param counter -- indicates which arc is being traversed right now.
+       */
       private void traverseMatrix (int[][] m, int i, int counter) {
     	  for (int j = 0; j < m[i].length; j++) {
-    		  if (m[i][j] == 1) {
-    			  m[i][j] = 2;
-    			  m[j][i] = 0;
+    		  if (m [i][j] == 1) {
+    			  m [i][j] = 2; // sets the arc to an "used" state.
+    			  m [j][i] = 0; // "deletes" the arc. Equivalent to setting it to an "used" state.
     			  
     			  String si = String.valueOf(i+1);
     			  String sj = String.valueOf(j+1);
     			  
-    			  String name = "av" + si + "_v" + sj;
+    			  String arcId = "av" + si + "_v" + sj;
     			  
-    			  Arc arc = this.getArcByName (name);
+    			  Arc arc = this.getArcByName (arcId);
     			  
     			  arc.info = counter;
     			  
     			  if (counter <= this.edges) {
+    				  this.setEdges++;
         			  traverseMatrix (m, j, ++counter);
     			  }
     			  
@@ -298,11 +293,34 @@ public class GraphTask {
     	  }
       }
       
-      
-      
-      private Arc getArcByName (String name) {
+      /**
+       * Resets the arc info and setEdges variables for a new circuit round.
+       */
+      private void resetECircuit() {
+    	  this.setEdges = 0;
     	  Vertex vertex = first;
     	  
+    	  while (vertex != null) {
+    		  Arc arc = vertex.first;
+    		  while (arc != null) {
+    			  if (arc.info != 0) {
+    				  arc.info = 0;
+    			  }
+    			  arc = arc.next;
+    		  }
+    		  vertex = vertex.next;
+    	  }
+      }
+      
+      /**
+       * Fetches an arc by the specified parameter string. 
+       * @param name -- the string by which the arc is looked for.
+       * @return The arc with the specified id.
+       * @throws RuntimeException if an arc with the specified name wasn't found.
+       */
+      private Arc getArcByName (String name) {
+    	  Vertex vertex = first;
+
     	  while (vertex != null) {
     		  Arc arc = vertex.first;
     		  while (arc != null) {
@@ -316,27 +334,27 @@ public class GraphTask {
     	  throw new RuntimeException ("Something went wrong. " + name + " found no match.");
       }
       
-      /*
-       * Assistant method.
-       * i = 1 => prints out graph's all vertex.degree values.
-       * i = 2 => prints out graph's all arc.info values.
+      /**
+       * Prints out various properties for various graph objects.
+       * @param i -- indicates what is to be printed. Value 1 -- vertex id. Value 2 -- arc info. Value 3 -- arc id.
+       * 
        */
-      public void printInfos (int i) {
+      public void printInfo (int i) {
     	  Vertex v = first;
     	  
     	  if (i == 1) { // vertex id.
     		  while (v != null) {
-    			  System.out.println("Vertex " + v.id + " info property value: " + v.info);
+    			  System.out.println ("Vertex " + v.id + " info property value: " + v.info);
     			  v = v.next;
     		  }
     	  }
     	  
     	  if (i == 2) { // Prints Arc.info
         	  while (v != null) {
-        		  System.out.println("Vertex " + v + " -- ");
+        		  System.out.println ("Vertex " + v + " -- ");
         		  Arc a = v.first;
         		  while (a != null) {
-        			  System.out.println("Arc  " + a + "'s info --  " + a.info);
+        			  System.out.println ("Arc  " + a + "'s info --  " + a.info);
         			  a = a.next;
         		  }
             	  v = v.next;
@@ -345,27 +363,16 @@ public class GraphTask {
     	  
     	  if (i == 3) { // arc id.
            	  while (v != null) {
-        		  System.out.println("Vertex " + v + " -- ");
+        		  System.out.println ("Vertex " + v + " -- ");
         		  Arc a = v.first;
         		  while (a != null) {
-        			  System.out.println("Arc  " + a + "'s id --  " + a.id);
+        			  System.out.println ("Arc  " + a + "'s id --  " + a.id);
         			  a = a.next;
         		  }
             	  v = v.next;
         	  }
     	  }
-    	  
-    	  if (i == 4) {
-           	  while (v != null) { // arc info
-        		  Arc a = v.first;
-        		  while (a != null) {
-        			  System.out.println("Arc " + a + "'s info --  " + a.info);
-        			  a = a.next;
-        		  }
-            	  v = v.next;
-        	  }
-    	  }
-      }// printInfos() end.
+      }// printInfo();
       
       /**
        * Prints out the graph's adjacency matrix in a simple format.
@@ -376,10 +383,9 @@ public class GraphTask {
     	  for (int i = 0; i < m.length; i++) {
     		  System.out.println();
     		  for (int j = 0; j < m.length; j++) {
-    			  System.out.print(m[i][j] + ", ");
+    			  System.out.print(m [i][j] + ", ");
     		  }
     	  }
-    	  
     	  System.out.println();
       }// printAdjMatrix();
       
