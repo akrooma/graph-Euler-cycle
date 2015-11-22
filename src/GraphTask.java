@@ -9,10 +9,11 @@ public class GraphTask {
 
    public void run() {
       Graph g = new Graph ("G");
-      g.createRandomSimpleGraph (4, 4);
+      g.createRandomSimpleGraph (6, 12);
       System.out.println (g);
       g.printAdjMatrix();
       g.setEulerianCircuit();
+      System.out.println("Eulerian circuit numbering: ");
       g.printInfo(2);
    }
 
@@ -70,8 +71,12 @@ public class GraphTask {
       private String id;
       private Vertex first;
       private int info = 0;
+      
       private int edges = 0; // shows how many edges the graph has.
-      private int setEdges = 0;
+      private int setEdges = 0; // indicates how many edges have been traversed in the Euler circuit.
+      
+      private String startVertexId = null;
+      private String endVertexId = null;
 
       Graph (String s, Vertex v) {
          id = s;
@@ -219,8 +224,13 @@ public class GraphTask {
       /**
        * Checks if this graph meets the requirements of an Eulerian circuit.
        * @throws RuntimeException if this graph doesn't meet the requirements.
+       * @throws RunTimeException if the graph is "empty" -- no vertices, no edges.
        */
       private void hasEulerianCircuit() {
+    	  if (this.first == null) {
+    		  throw new RuntimeException("Graph is empty.");
+    	  }
+    	  
     	  int x;
     	  int[][] adjMatrix = createAdjMatrix();
     	  
@@ -230,6 +240,8 @@ public class GraphTask {
     		  for (int j = 0; j < adjMatrix[i].length; j++) {
     			  if (adjMatrix [i][j] == 1) {
     				  x++;
+    			  } else if (adjMatrix [i][j] == 2) { // checks for loops in graph, just in case.
+    				  throw new RuntimeException ("Eulerian circuit cannot be made for graph: " + this);
     			  }
     		  }
     		  
@@ -241,25 +253,31 @@ public class GraphTask {
       
       /**
        * Sets an Eulerian circuit for this graph by numbering the arcs according to the circuit's order.
-       * The algorithm starts from the first vertex. If it fails to find a proper circuit, it'll 
-       * restart the process from a new vertex.
        */
       public void setEulerianCircuit() {
     	  this.hasEulerianCircuit();
     	  
     	  int[][] matrix = this.createAdjMatrix();
     	  int vertexInfo = this.first.info;
+    	  Vertex v = this.first;
+    	  this.startVertexId = v.id;
     	  int counter = 1;
     	  
     	  this.traverseMatrix (matrix, vertexInfo, counter);
     	  
     	  while (setEdges != this.edges) {
+    		  v = v.next;
+    		  this.startVertexId = v.id;
     		  this.resetECircuit();
     		  matrix = this.createAdjMatrix();
     		  this.traverseMatrix (matrix, ++vertexInfo, counter);
     	  }
     	  
-    	  return;
+    	  if (setEdges == this.edges && this.startVertexId.equals(this.endVertexId)) {
+    		  return;
+    	  } else {
+    		  throw new RuntimeException("Unsuccesful.");
+    	  }
       }
       
       /**
@@ -287,6 +305,10 @@ public class GraphTask {
     				  this.setEdges++;
         			  traverseMatrix (m, j, ++counter);
     			  }
+
+    			  if (counter == this.edges+1) {
+    				  this.endVertexId = "v"+sj;
+    			  }
     			  
     			  return;
     		  }
@@ -294,7 +316,7 @@ public class GraphTask {
       }
       
       /**
-       * Resets the arc info and setEdges variables for a new circuit round.
+       * Resets the arc info and setEdges variables for a new Eulerian circuit round.
        */
       private void resetECircuit() {
     	  this.setEdges = 0;
@@ -335,9 +357,23 @@ public class GraphTask {
       }
       
       /**
+       * Prints out the graph's adjacency matrix in a simple format.
+       */
+      public void printAdjMatrix() {
+    	  int[][] m = this.createAdjMatrix();
+    	  System.out.print("Adjacency matrix: ");
+    	  for (int i = 0; i < m.length; i++) {
+    		  System.out.println();
+    		  for (int j = 0; j < m.length; j++) {
+    			  System.out.print(m [i][j] + ", ");
+    		  }
+    	  }
+    	  System.out.println();
+      }// printAdjMatrix();
+      
+      /**
        * Prints out various properties for various graph objects.
        * @param i -- indicates what is to be printed. Value 1 -- vertex id. Value 2 -- arc info. Value 3 -- arc id.
-       * 
        */
       public void printInfo (int i) {
     	  Vertex v = first;
@@ -373,21 +409,5 @@ public class GraphTask {
         	  }
     	  }
       }// printInfo();
-      
-      /**
-       * Prints out the graph's adjacency matrix in a simple format.
-       */
-      public void printAdjMatrix() {
-    	  int[][] m = this.createAdjMatrix();
-    	  
-    	  for (int i = 0; i < m.length; i++) {
-    		  System.out.println();
-    		  for (int j = 0; j < m.length; j++) {
-    			  System.out.print(m [i][j] + ", ");
-    		  }
-    	  }
-    	  System.out.println();
-      }// printAdjMatrix();
-      
    }// class Graph.
 }// class GraphTask.
